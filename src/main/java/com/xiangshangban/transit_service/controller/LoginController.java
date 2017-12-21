@@ -54,13 +54,6 @@ public class LoginController {
 	private UusersService uusersService;
 	@Autowired
 	CompanyService companyService;
-	@Autowired
-	private UniqueLoginService uniqueLoginService;
-	@Autowired
-	private UusersRolesService uusersRolesService;
-	@Autowired
-	private UserCompanyService userCompanyService;
-	
 	/**
 	 * @author 李业/获取二维码
 	 * @param session
@@ -124,7 +117,6 @@ public class LoginController {
 			return result;
 		}
 	}
-
 	/**
 	 * @author 李业/app扫描二维码
 	 * @param qrcode
@@ -200,7 +192,6 @@ public class LoginController {
 			return result;
 		}
 	}
-
 	/**
 	 * @author 李业/app确认二维码登录
 	 * @param request
@@ -314,6 +305,7 @@ public class LoginController {
 				redis.getJedis().expire(token, 1800);
 			}
 			this.changeLogin(phone, token, clientId, type);
+			result.put("token", token);
 		}
 		if("0".equals(type)){
 			String sessionId = request.getSession().getId();
@@ -402,9 +394,9 @@ public class LoginController {
 	public Map<String, Object> logOut(HttpServletRequest request) {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
-			String phone = "";
-			String type = request.getHeader("type");
-			if("0".equals(type)){
+			/*String phone = "";
+			String type = request.getHeader("type");*/
+			/*if("0".equals(type)){
 				Object obj = request.getSession().getAttribute("phone");
 				if(obj!=null){
 					phone = obj.toString();
@@ -415,7 +407,7 @@ public class LoginController {
 				String token = request.getHeader("token");
 				String clientId = request.getHeader("clientId");
 				uniqueLoginService.deleteByTokenAndClientId(token, clientId);
-			}
+			}*/
 			result.put("message", "退出成功");
 			result.put("returnCode", "3000");
 			return result;

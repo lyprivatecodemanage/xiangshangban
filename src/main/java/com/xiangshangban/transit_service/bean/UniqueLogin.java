@@ -10,16 +10,6 @@ public class UniqueLogin {
 	private String  createTime;
 	
 	public UniqueLogin(){}
-	
-	public UniqueLogin(String id, String phone, String token, String clientId,String status) {
-		super();
-		this.id = id;
-		this.phone = phone;
-		this.token = token;
-		this.clientId = clientId;
-		this.status = status;
-	}
-
 	public UniqueLogin(String id, String phone, String sessionId, String token, String clientId, String status,
 			String createTime) {
 		this.id = id;

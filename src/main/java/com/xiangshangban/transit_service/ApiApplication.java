@@ -175,8 +175,7 @@ public class ApiApplication {
 			MyRealm myRealm = new MyRealm();
 			myRealm.setCredentialsMatcher(matcher);
 			myRealm.setCachingEnabled(true);
-			myRealm.setAuthenticationCachingEnabled(true);
-			myRealm.setAuthenticationCachingEnabled(true);
+			myRealm.setAuthorizationCachingEnabled(true);
 			return myRealm;
 		}
 

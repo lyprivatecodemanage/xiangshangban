@@ -17,13 +17,6 @@ public class Login {
 	public Login(){
 		
 	}
-	public Login(String id, String phone, String token, String clientId,String status) {
-		this.id = id;
-		this.phone = phone;
-		this.token = token;
-		this.clientId = clientId;
-		this.status = status;
-	}
 	public Login(String id, String phone, String token, String salt, String createTime, String effectiveTime,
 			String sessionId, String qrcode, String qrcodeStatus, String status, String clientId) {
 		this.id = id;

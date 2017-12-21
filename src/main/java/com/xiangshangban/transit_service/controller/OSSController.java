@@ -20,6 +20,7 @@ import com.xiangshangban.transit_service.service.OSSFileService;
 import com.xiangshangban.transit_service.service.UusersService;
 import com.xiangshangban.transit_service.util.HttpClientUtil;
 import com.xiangshangban.transit_service.util.OSSFileUtil;
+import com.xiangshangban.transit_service.util.RedisUtil;
 
 
 @RestController
@@ -42,17 +43,22 @@ public class OSSController {
 	public ReturnData appUpload(@RequestParam(value="file") MultipartFile file, 
 			@RequestParam(value="funcDirectory") String funcDirectory,HttpServletRequest request){ 
 		ReturnData returnData = new ReturnData();
+		RedisUtil redis = RedisUtil.getInstance();
 		//根据token获得当前用户id,公司id
+		String phone = "";
 		String token = request.getHeader("token");
 		Uusers user = new Uusers();
 		if (StringUtils.isEmpty(token)) {
 			String sessionId = request.getSession().getId();
 			System.out.println("redirectController : "+sessionId);
-			user = uusersService.selectCompanyBySessionId(sessionId);
+			phone = redis.getJedis().hget(sessionId,"session");
+			
+			//user = uusersService.selectCompanyBySessionId(sessionId);
 		} else {
-			user = uusersService.selectCompanyByToken(token);
+			phone = redis.getJedis().hget(token, "token");
+			//user = uusersService.selectCompanyByToken(token);
 		}
-
+		user = uusersService.selectByPhone(phone);
 		if (user == null || StringUtils.isEmpty(user.getCompanyId()) || StringUtils.isEmpty(user.getUserid())) {
 			
 			returnData.setReturnCode("3003");
