@@ -67,7 +67,7 @@ public class ApiApplication {
 		return registrationBean;
 	}
 
-	@Bean
+	/*@Bean
 	public EmbeddedServletContainerCustomizer containerCustomizer() {
 		return new EmbeddedServletContainerCustomizer() {
 			@Override
@@ -75,7 +75,7 @@ public class ApiApplication {
 				container.setSessionTimeout(21600);// 单位为S
 			}
 		};
-	}
+	}*/
 	
 	// 配置核心安全事务管理器
 	@Bean(name = "securityManager")
