@@ -67,7 +67,7 @@ public class ApiApplication {
 		return registrationBean;
 	}
 
-/*	@Bean
+	/*@Bean
 	public EmbeddedServletContainerCustomizer containerCustomizer() {
 		return new EmbeddedServletContainerCustomizer() {
 			@Override
