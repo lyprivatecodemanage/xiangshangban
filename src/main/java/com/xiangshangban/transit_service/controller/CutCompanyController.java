@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpRequest;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,15 +37,14 @@ import com.xiangshangban.transit_service.service.UusersRolesService;
 import com.xiangshangban.transit_service.service.UusersService;
 import com.xiangshangban.transit_service.util.FormatUtil;
 import com.xiangshangban.transit_service.util.PinYin2Abbreviation;
+import com.xiangshangban.transit_service.util.RedisUtil;
+import com.xiangshangban.transit_service.util.RedisUtil.Hash;
 
 @RestController
 @RequestMapping("/CutCompanyController")
 public class CutCompanyController {
 
 	Logger logger = Logger.getLogger(CutCompanyController.class);
-	
-	@Autowired
-	UniqueLoginService uniqueLoginService;
 	
 	@Autowired
 	UserCompanyService userCompanyService;
@@ -74,13 +72,19 @@ public class CutCompanyController {
 	 */
 	@Transactional
 	@RequestMapping(value="/selectCompanyGather",produces = "application/json;charset=utf-8",method = RequestMethod.POST)
-	public Map<String,Object> selectCompanyGather(@RequestBody String jsonString,HttpServletRequest request){
+	public Map<String,Object> selectCompanyGather(HttpServletRequest request){
 		Map<String,Object> map = new HashMap<>();
 		List<UserCompanyDefault> userCompanyList = new ArrayList<>();
 		List<Company> conpanyList = new ArrayList<>();
 		
-		JSONObject obj = JSON.parseObject(jsonString);
-		String userId = obj.getString("userId");
+		// 初始化redis
+		RedisUtil redis = RedisUtil.getInstance();
+		// 从redis取出短信验证码
+		String phone = redis.new Hash().hget(request.getSession().getId(), "session");
+		
+		Uusers user = uusersService.selectByPhone(phone);
+		
+		String userId = user.getUserid();
 		
 		try {
 			if(StringUtils.isEmpty(userId)){
@@ -133,11 +137,18 @@ public class CutCompanyController {
 	 */
 	@Transactional
 	@RequestMapping(value="/cutCompany",produces = "application/json;charset=utf-8",method = RequestMethod.POST)
-	public Map<String,Object> cutCompany(@RequestBody String jsonString,HttpServletRequest request,HttpServletResponse response){
+	public Map<String,Object> cutCompany(@RequestBody String jsonString,HttpServletRequest request){
 		Map<String,Object> map = new HashMap<>();
 		
+		// 初始化redis
+		RedisUtil redis = RedisUtil.getInstance();
+		// 从redis取出短信验证码
+		String phone = redis.new Hash().hget(request.getSession().getId(), "session");
+				
+		Uusers user = uusersService.selectByPhone(phone);
+		
 		JSONObject obj = JSON.parseObject(jsonString);
-		String userId = obj.getString("userId");
+		String userId = user.getUserid();
 		String cutCompanyId = obj.getString("cutCompanyId");
 		
 		try {
@@ -189,13 +200,19 @@ public class CutCompanyController {
 	 */
 	@Transactional
 	@RequestMapping(value="/createCompany", produces = "application/json;charset=UTF-8", method=RequestMethod.POST)
-	public Map<String,Object> createCompany(@RequestBody String jsonString){
+	public Map<String,Object> createCompany(@RequestBody String jsonString,HttpServletRequest request){
 		Map<String,Object> map = new HashMap<>();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		
-		JSONObject obj = JSON.parseObject(jsonString);
+		// 初始化redis
+		RedisUtil redis = RedisUtil.getInstance();
+		// 从redis取出短信验证码
+		String phone = redis.new Hash().hget(request.getSession().getId(), "session");
+						
+		Uusers user = uusersService.selectByPhone(phone);
 		
-		String userId = obj.getString("userId");
+		JSONObject obj = JSON.parseObject(jsonString);
+		String userId = user.getUserid();
 		String companyName = obj.getString("companyName");
 		
 		if(userId==null||"".equals(userId)||companyName==null||"".equals(companyName)){
@@ -392,15 +409,18 @@ public class CutCompanyController {
 		String token = request.getHeader("token");
 		
 		try {
+			// 初始化redis
+			RedisUtil redis = RedisUtil.getInstance();
+			// 从redis取出短信验证码
+			String phone = redis.new Hash().hget(token, "token");
+							
+			Uusers user = uusersService.selectByPhone(phone);
+			
 			if(StringUtils.isEmpty(token)){
 				map.put("returnCode","3006");
 				map.put("message", "必传参数为空");
 				return map;
 			}
-			
-			String phone = uniqueLoginService.selectByToken(token).getPhone();
-			
-			Uusers user = uusersService.selectByPhone(phone);
 			
 			String userId = user.getUserid();
 			
@@ -457,15 +477,18 @@ public class CutCompanyController {
 		String token = request.getHeader("token");
 		
 		try {
+			// 初始化redis
+			RedisUtil redis = RedisUtil.getInstance();
+			// 从redis取出短信验证码
+			String phone = redis.new Hash().hget(token, "token");
+										
+			Uusers user = uusersService.selectByPhone(phone);
+			
 			if(token==null||"".equals(token)||cutCompanyId==null||"".equals(cutCompanyId)){
 				map.put("returnCode","3006");
 				map.put("message", "必传参数为空");
 				return map;
 			}
-			
-			String phone = uniqueLoginService.selectByToken(token).getPhone();
-			
-			Uusers user = uusersService.selectByPhone(phone);
 			
 			String userId = user.getUserid();
 			
@@ -515,6 +538,9 @@ public class CutCompanyController {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String token = request.getHeader("token");
 		
+		// 初始化redis
+		RedisUtil redis = RedisUtil.getInstance();
+		
 		if(token==null||"".equals(token)||companyName==null||"".equals(companyName)){
 			map.put("returnCode", "3006");
             map.put("message", "必传参数为空");
@@ -522,8 +548,9 @@ public class CutCompanyController {
 		}
 		
 		try {
-			String phone = uniqueLoginService.selectByToken(token).getPhone();
-			
+			// 从redis取出短信验证码
+			String phone = redis.new Hash().hget(token, "token");
+										
 			Uusers user = uusersService.selectByPhone(phone);
 			
 			String userId = user.getUserid();
@@ -722,15 +749,18 @@ public class CutCompanyController {
 		Map<String,Object> map = new HashMap<>();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String token = request.getHeader("token");
-		
+		// 初始化redis
+		RedisUtil redis = RedisUtil.getInstance();
+				
 		try {
 			if(token==null||"".equals(token)||companyNo==null||"".equals(companyNo)){
 				map.put("returnCode","3006");
 				map.put("message", "必传参数为空");
 				return map;
 			}
-			String phone = uniqueLoginService.selectByToken(token).getPhone();
-			
+			// 从redis取出短信验证码
+			String phone = redis.new Hash().hget(token, "token");
+										
 			Uusers user = uusersService.selectByPhone(phone);
 			
 			String userId = user.getUserid();

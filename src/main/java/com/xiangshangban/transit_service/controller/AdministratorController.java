@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -29,10 +28,10 @@ import com.xiangshangban.transit_service.service.OSSFileService;
 import com.xiangshangban.transit_service.service.UserCompanyService;
 import com.xiangshangban.transit_service.service.UusersRolesService;
 import com.xiangshangban.transit_service.service.UusersService;
-import com.xiangshangban.transit_service.util.HttpClientUtil;
 import com.xiangshangban.transit_service.util.PropertiesUtils;
 import com.xiangshangban.transit_service.util.RedisUtil;
 import com.xiangshangban.transit_service.util.YtxSmsUtil;
+import com.xiangshangban.transit_service.util.RedisUtil.Hash;
 
 @RestController
 @RequestMapping("/administratorController")
@@ -61,12 +60,18 @@ public class AdministratorController {
 	 * @return
 	 */
 	@RequestMapping(value="/administratorInit",produces = "application/json;charset=utf-8",method = RequestMethod.POST)
-	public Map<String,Object> administratorInit(@RequestBody String jsonString){
+	public Map<String,Object> administratorInit(HttpServletRequest request){
 		Map<String,Object> map = new HashMap<>();
 		List<Employee> list = new ArrayList<>();
 
-		JSONObject obj = JSON.parseObject(jsonString);
-		String companyId = obj.getString("companyId");
+		// 初始化redis
+		RedisUtil redis = RedisUtil.getInstance();
+		// 从redis取出短信验证码
+		String phone = redis.new Hash().hget(request.getSession().getId(), "session");
+				
+		Uusers user = uusersService.selectByPhone(phone);
+		
+		String companyId = userCompanyService.selectBySoleUserId(user.getUserid()).getCompanyId();
 		
 		if(StringUtils.isEmpty(companyId)){
 			map.put("returnCode","3006");
@@ -157,16 +162,19 @@ public class AdministratorController {
 	 * @return
 	 */
 	@RequestMapping(value="/adminAuthCode",produces = "application/json;charset=utf-8",method = RequestMethod.POST)
-	public Map<String,Object> administratorAuthCode(@RequestBody String jsonString){
+	public Map<String,Object> administratorAuthCode(HttpServletRequest request){
 		Map<String, Object> result = new HashMap<String, Object>();
 		YtxSmsUtil sms = new YtxSmsUtil("LTAIcRopzlp5cbUd", "VnLMEEXQRukZQSP6bXM6hcNWPlphiP");
 		try {
-			JSONObject obj = JSON.parseObject(jsonString);
-			String userId = obj.getString("userId");
-			
-			String phone = uusersService.selectById(userId).getPhone();
-			
+			// 初始化redis
+			RedisUtil redis = RedisUtil.getInstance();
+			// 从redis取出短信验证码
+			String phone = redis.new Hash().hget(request.getSession().getId(), "session");
+					
 			Uusers user = uusersService.selectByPhone(phone);
+			
+			String userId = user.getUserid();
+			
 			// 获取验证码
 			String smsCode = "";
 			//测试环境或者测试账号
@@ -180,7 +188,6 @@ public class AdministratorController {
 				// 更新数据库验证码记录,当做登录凭证
 				uusersService.updateSmsCode(phone, smsCode);
 			}
-			RedisUtil redis = RedisUtil.getInstance();
 			// 设值
 			redis.new Hash().hset("smsCode_" + phone, "smsCode", smsCode);
 			// 设置redis保存时间
@@ -224,9 +231,16 @@ public class AdministratorController {
 		Map<String,Object> map = new HashMap<>();
 		String historyUserIds = "";
 		
+		// 初始化redis
+		RedisUtil redis = RedisUtil.getInstance();
+		// 从redis取出短信验证码
+		String phone = redis.new Hash().hget(request.getSession().getId(), "session");
+						
+		Uusers user = uusersService.selectByPhone(phone);
+		
 		JSONObject obj = JSON.parseObject(jsonString);
 		String newUserId = obj.getString("newUserId");
-		String companyId = obj.getString("companyId");
+		String companyId = userCompanyService.selectBySoleUserId(user.getUserid()).getCompanyId();
 		
 		try {
 			UusersRolesKey uusersRolesKey = uusersRolesService.SelectAdministrator(companyId, new Uroles().admin_role);
