@@ -54,6 +54,8 @@ public class LoginController {
 	private UusersService uusersService;
 	@Autowired
 	CompanyService companyService;
+	@Autowired
+	private UusersRolesService uusersRolesService;
 	/**
 	 * @author 李业/获取二维码
 	 * @param session
@@ -314,6 +316,14 @@ public class LoginController {
 			redis.getJedis().expire(sessionId, 1800);
 			this.changeLogin(phone, sessionId, clientId, type);
 		}
+		Uusers user = uusersService.selectByPhone(phone);
+		Uroles roles = uusersRolesService.SelectRoleByUserId(user.getUserid(), user.getCompanyId());
+		if(roles==null || StringUtils.isEmpty(roles.getRolename())){
+			result.put("message", "用户身份信息缺失");
+			result.put("returnCode", "3003");
+			return result;
+		}
+		result.put("roles", roles.getRolename());
 		result.put("message", "登录成功!");
 		result.put("returnCode", "3000");
 		return result;
@@ -504,7 +514,7 @@ public class LoginController {
 			// 设值
 			redis.new Hash().hset("smsCode_" + phone, "smsCode", smsCode);
 			// 设置redis保存时间
-			redis.expire("smsCode_" + phone, 120);
+			redis.expire("smsCode_" + phone, 60);
 			// 设置返回结果
 			//result.put("smsCode", smsCode);
 			result.put("message", "成功");
