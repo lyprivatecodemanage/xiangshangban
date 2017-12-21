@@ -343,7 +343,7 @@ public class LoginController {
 	 * @return
 	 */
 	@Transactional
-	@RequestMapping(value = "/loginUser",method=RequestMethod.POST)
+	@RequestMapping(value = "/loginUser")
 	public Map<String, Object> loginUser(HttpSession session,
 			HttpServletRequest request)throws Exception {
 		Map<String, Object> result = new HashMap<String, Object>();
