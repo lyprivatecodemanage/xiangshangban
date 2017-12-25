@@ -150,8 +150,14 @@
 		<include refid="Base_Column_List" /> ,company_id
 		from u_users u 
 		left join user_company uc on u.userid = uc.user_id and uc.current_option = '1'
-		where u.status = '1' and u.phone = #{phone}
+		where u.status = '1' and u.phone = #{phone} and type = #{type}
 	</select>
+	<select id="selectUserByPhone" parameterType="java.lang.String" resultMap="BaseResultMap">
+		select
+		<include refid="Base_Column_List" />
+		from u_users u 
+		where phone = #{phone}
+	</select>	
 	<select id="isActive" parameterType="java.lang.String" resultType="int">
 		select count(uc.company_id)
 		from u_users u,user_company uc 

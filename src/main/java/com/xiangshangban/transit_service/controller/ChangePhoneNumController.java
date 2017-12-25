@@ -47,7 +47,7 @@ public class ChangePhoneNumController {
 			return result;
 		}
 		try{
-			Uusers user = uusersService.selectByPhone(phone);
+			Uusers user = uusersService.selectByPhone(phone,"0");
 			if(user==null){
 				result.put("message", "手机号不存在");
 				result.put("returnCode", "4004");
@@ -165,7 +165,7 @@ public class ChangePhoneNumController {
 				result.put("returnCode", "4002");
 				return result;
 			}
-			Uusers user = uusersService.selectByPhone(phone);
+			Uusers user = uusersService.selectByPhone(phone,"0");
 			// 系统中是否有新手机号
 			// 否
 			if (user == null) {
@@ -347,7 +347,7 @@ public class ChangePhoneNumController {
 		try {
 
 			String oldPhone = changePhone.getOldPhone();
-			Uusers user = uusersService.selectByPhone(oldPhone);
+			Uusers user = uusersService.selectByPhone(oldPhone,"0");
 			changePhone.setUserId(user.getUserid());
 			changePhone.setId(FormatUtil.createUuid());
 			changePhone.setVerificationStatus("0");

@@ -78,7 +78,7 @@ public class CutCompanyController {
 		// 从redis取出短信验证码
 		String phone = redis.new Hash().hget(request.getSession().getId(), "session");
 						
-		Uusers user = uusersService.selectByPhone(phone);
+		Uusers user = uusersService.selectByPhone(phone,"0");
 		
 		String userId = user.getUserid();
 		
@@ -141,7 +141,7 @@ public class CutCompanyController {
 		// 从redis取出短信验证码
 		String phone = redis.new Hash().hget(request.getSession().getId(), "session");
 								
-		Uusers user = uusersService.selectByPhone(phone);
+		Uusers user = uusersService.selectByPhone(phone,"0");
 		
 		JSONObject obj = JSON.parseObject(jsonString);
 		String userId = user.getUserid();
@@ -204,7 +204,7 @@ public class CutCompanyController {
 		// 从redis取出短信验证码
 		String phone = redis.new Hash().hget(request.getSession().getId(), "session");
 								
-		Uusers user = uusersService.selectByPhone(phone);
+		Uusers user = uusersService.selectByPhone(phone,"0");
 		
 		JSONObject obj = JSON.parseObject(jsonString);
 		
@@ -416,7 +416,7 @@ public class CutCompanyController {
 			// 从redis取出短信验证码
 			String phone = redis.new Hash().hget(token, "token");
 									
-			Uusers user = uusersService.selectByPhone(phone);
+			Uusers user = uusersService.selectByPhone(phone,"1");
 			
 			String userId = user.getUserid();
 			
@@ -484,7 +484,7 @@ public class CutCompanyController {
 			// 从redis取出短信验证码
 			String phone = redis.new Hash().hget(token, "token");
 									
-			Uusers user = uusersService.selectByPhone(phone);
+			Uusers user = uusersService.selectByPhone(phone,"1");
 			
 			String userId = user.getUserid();
 			
@@ -546,7 +546,7 @@ public class CutCompanyController {
 			// 从redis取出短信验证码
 			String phone = redis.new Hash().hget(token, "token");
 									
-			Uusers user = uusersService.selectByPhone(phone);
+			Uusers user = uusersService.selectByPhone(phone,"1");
 			
 			String userId = user.getUserid();
 			
@@ -784,7 +784,7 @@ public class CutCompanyController {
 			// 从redis取出短信验证码
 			String phone = redis.new Hash().hget(token, "token");
 									
-			Uusers user = uusersService.selectByPhone(phone);
+			Uusers user = uusersService.selectByPhone(phone,"1");
 			
 			String userId = user.getUserid();
 			

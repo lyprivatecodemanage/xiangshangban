@@ -17,7 +17,9 @@ public interface UusersMapper {
 
     Uusers selectByPrimaryKey(String userId);
     
-    Uusers selectByPhone(@Param("phone")String phone);
+    Uusers selectByPhone(@Param("phone")String phone,@Param("type")String type);
+    
+    Uusers selectUserByPhone(String phone);
     
     List<Uroles> selectRoles(String phone);
     

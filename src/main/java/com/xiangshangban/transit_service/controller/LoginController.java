@@ -85,15 +85,14 @@ public class LoginController {
 				String format = "http://www.xiangshangban.com/show?shjncode=invite_";
 				
 				String token = request.getHeader("token");
-				
+				String WebAppType = request.getHeader("type");
+
 				// 初始化redis
 				RedisUtil redis = RedisUtil.getInstance();
 				// 从redis取出短信验证码
 				String phone = redis.new Hash().hget(token, "token");
 				
-				Uusers user = uusersService.selectByPhone(phone);
-				
-				String WebAppType = request.getHeader("type");
+				Uusers user = uusersService.selectByPhone(phone,WebAppType);
 				
 				String companyid = userCompanyService.selectBySoleUserId(user.getUserid(),WebAppType).getCompanyId();
 				
@@ -329,7 +328,7 @@ public class LoginController {
 			this.changeLogin(phone, sessionId, clientId, type);
 		}
 		
-		Uusers user = uusersService.selectByPhone(phone);
+		Uusers user = uusersService.selectByPhone(phone,type);
 		Uroles roles = uusersRolesService.SelectRoleByUserId(user.getUserid(), user.getCompanyId());
 		if(roles==null || StringUtils.isEmpty(roles.getRolename())){
 			result.put("message", "用户身份信息缺失");
@@ -510,8 +509,9 @@ public class LoginController {
 	public Map<String, Object> sendSms(String phone, HttpServletRequest request, HttpSession session) {
 		Map<String, Object> result = new HashMap<String, Object>();
 		YtxSmsUtil sms = new YtxSmsUtil("LTAIcRopzlp5cbUd", "VnLMEEXQRukZQSP6bXM6hcNWPlphiP");
+		String type = request.getHeader("type");
 		try {
-			Uusers user = uusersService.selectByPhone(phone);
+			Uusers user = uusersService.selectByPhone(phone,type);
 			// 获取验证码
 			String smsCode = "";
 			//测试环境或者测试账号

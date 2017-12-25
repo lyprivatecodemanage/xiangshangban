@@ -2,6 +2,8 @@ package com.xiangshangban.transit_service.realm;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -82,7 +84,7 @@ public class MyRealm extends AuthorizingRealm {
 			Login login = loginService.selectByToken(inToken);
 			if(login!=null && userCode.equals(login.getClientId())){
 				userCode = login.getPhone();
-				Uusers user = usersService.selectByPhone(userCode);
+				Uusers user = usersService.selectUserByPhone(userCode);
 				utoken.setUsername(userCode);
 				utoken.setPassword(user.getTemporarypwd().toCharArray());
 			}
@@ -91,7 +93,7 @@ public class MyRealm extends AuthorizingRealm {
 		// 第二部:根据用户输入的userCode从数据库查询
 		// ....
 		// 根据从数据库查询到密码
-		Uusers user = usersService.selectByPhone(userCode);
+		Uusers user = usersService.selectUserByPhone(userCode);
 		if (user == null) {
 			return null;
 		}

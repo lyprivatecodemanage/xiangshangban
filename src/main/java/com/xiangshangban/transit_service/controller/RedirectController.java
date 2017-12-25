@@ -54,6 +54,7 @@ public class RedirectController {
 		
 		//根据token获得当前用户id,公司id
 		String token = request.getHeader("token");
+		String type = request.getHeader("type");
 		String phone="";
 		Uusers user = new Uusers();
 		if (StringUtils.isEmpty(token)) {
@@ -65,7 +66,7 @@ public class RedirectController {
 			phone = redis.getJedis().hget(token, "token");
 			//user = userService.selectCompanyByToken(token);
 		}
-		user = userService.selectByPhone(phone);
+		user = userService.selectByPhone(phone,type);
 
 		if (user == null || StringUtils.isEmpty(user.getCompanyId()) || StringUtils.isEmpty(user.getUserid())) {
 			ReturnData returnData = new ReturnData();
