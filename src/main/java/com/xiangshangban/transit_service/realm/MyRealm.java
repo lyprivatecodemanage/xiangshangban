@@ -77,6 +77,9 @@ public class MyRealm extends AuthorizingRealm {
 		// token用户输入
 		// 第一步从token中取出身份信息
 		String userCode = token.getPrincipal().toString();
+		String[] array = userCode.split("_");
+		userCode = array[0];
+		String loginType = array[1];
 		//token登录
 		UsernamePasswordToken utoken=(UsernamePasswordToken) token;
 		String inToken = new String(utoken.getPassword());
@@ -89,21 +92,21 @@ public class MyRealm extends AuthorizingRealm {
 				utoken.setPassword(user.getTemporarypwd().toCharArray());
 			}
 		}
-		//System.out.println("=================>" + token.toString());
-		// 第二部:根据用户输入的userCode从数据库查询
-		// ....
 		// 根据从数据库查询到密码
 		Uusers user = usersService.selectUserByPhone(userCode);
 		if (user == null) {
 			return null;
 		}
-		// String password = user.getUserpwd();
-		String password = user.getTemporarypwd();
-		// String password = "111111";
+		String password = "";
+		if("0".equals(loginType)){
+			password = user.getTemporarypwd();
+		}
+		if("1".equals(loginType)){
+			password = user.getUserpwd();
+		}
 		// 如果查询到返回认证信息AuthenticationInfo
 		SimpleAuthenticationInfo simpleAuthenticationInfo = new SimpleAuthenticationInfo(userCode, password,
 				this.getName());
-
 		return simpleAuthenticationInfo;
 	}
 

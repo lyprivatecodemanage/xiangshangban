@@ -17,9 +17,8 @@ public class UusersServiceImpl implements UusersService {
 	
 	@Override
 	public Uusers selectByPhone(String phone,String type) {
-		
 		return uusersMapper.selectByPhone(phone,type);
-	}
+		}
 	@Override
 	public Uusers selectByAccount(String account) {
 		// TODO Auto-generated method stub
