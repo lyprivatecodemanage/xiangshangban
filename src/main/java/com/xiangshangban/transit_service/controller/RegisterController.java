@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,7 +70,7 @@ public class RegisterController {
     
     @Transactional
     @RequestMapping(value = "/registerUsers", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
-    public Map<String, Object> registerUsers(String phone,String temporaryPwd,String userName,String companyName,String company_no,String type) {
+    public Map<String, Object> registerUsers(String phone,String password,String temporaryPwd,String userName,String companyName,String company_no,String type) {
 
         Map<String, Object> map = new HashMap<String, Object>();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -78,7 +79,7 @@ public class RegisterController {
 		// 用户编号
         String userId = "";
         
-        if(null==type||"".equals(type)||phone==null||"".equals(phone)||temporaryPwd==null||
+        if(null==type||"".equals(type)||phone==null||"".equals(phone)||StringUtils.isEmpty(password)||temporaryPwd==null||
         		"".equals(temporaryPwd)){
         	map.put("returnCode", "3006");
 			map.put("message", "参数为空");
@@ -97,6 +98,7 @@ public class RegisterController {
 					// 创建新增实体
                     Uusers uUsers = new Uusers();
                     uUsers.setUserid(userId);
+                    uUsers.setUserpwd(password);
                     uUsers.setPhone(phone);
                     uUsers.setTemporarypwd(temporaryPwd);
                     uUsers.setUsername(userName);
