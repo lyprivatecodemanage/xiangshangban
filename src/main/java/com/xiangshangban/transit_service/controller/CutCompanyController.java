@@ -732,6 +732,34 @@ public class CutCompanyController {
 	}
 	
 	/***
+	 *  焦振 / APP 根据公司编号查看公司信息
+	 * @param companyNo
+	 * @param request
+	 * @return
+	 */
+	@Transactional
+	@RequestMapping(value="/appSelectCompanyByCompanyNo",method=RequestMethod.POST)
+	public Map<String,Object> appSelectCompanyByCompanyNo(String companyNo,HttpServletRequest request){
+		Map<String,Object> map = new HashMap<>();
+
+		try {
+			Company company = companyService.selectByCompanyName(companyNo);
+			
+			map.put("company",company);
+			map.put("returnCode", "3000");
+			map.put("message", "数据请求成功");
+			return map;
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			logger.info(e);
+			map.put("returnCode", "3001");
+			map.put("message", "服务器错误");
+            return map;
+		}
+	}
+	
+	/***
 	 *  焦振 / APP 加入其它公司
 	 * @param companyNo
 	 * @param request

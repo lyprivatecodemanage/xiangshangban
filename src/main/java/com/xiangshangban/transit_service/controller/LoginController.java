@@ -65,7 +65,7 @@ public class LoginController {
 	 * @return
 	 */
 	@RequestMapping("/getQrcode")
-	public Map<String, Object> getQrcode(String type, String companyId, HttpSession session,HttpServletRequest request) {
+	public Map<String, Object> getQrcode(String type,HttpSession session,HttpServletRequest request) {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
 			String qrcode = "";
@@ -103,7 +103,7 @@ public class LoginController {
 				String companyid = userCompanyService.selectBySoleUserId(user.getUserid()).getCompanyId();
 				
 				// 根据公司ID查询出公司编号 生成二维码
-				Company company = companyService.selectByPrimaryKey(companyId);
+				Company company = companyService.selectByPrimaryKey(companyid);
 				Map<String, String> invite = new HashMap<>();
 				invite.put("companyNo", company.getCompany_no());
 				invite.put("companyName", company.getCompany_name());
