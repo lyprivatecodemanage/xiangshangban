@@ -93,7 +93,9 @@ public class LoginController {
 				
 				Uusers user = uusersService.selectByPhone(phone);
 				
-				String companyid = userCompanyService.selectBySoleUserId(user.getUserid()).getCompanyId();
+				String WebAppType = request.getHeader("type");
+				
+				String companyid = userCompanyService.selectBySoleUserId(user.getUserid(),WebAppType).getCompanyId();
 				
 				// 根据公司ID查询出公司编号 生成二维码
 				Company company = companyService.selectByPrimaryKey(companyid);

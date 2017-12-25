@@ -94,7 +94,7 @@ public class CutCompanyController {
 			List<UserCompanyDefault> list = new ArrayList<>();
 			
 			for (UusersRolesKey uusersRolesKey : urlist) {
-				 list.add(userCompanyService.selectByUserIdAndCompanyId(userId, uusersRolesKey.getCompanyId()));
+				 list.add(userCompanyService.selectByUserIdAndCompanyId(userId, uusersRolesKey.getCompanyId(),"0"));
 			}
 			
 			for (UserCompanyDefault userCompanyDefault : list) {
@@ -154,7 +154,7 @@ public class CutCompanyController {
 				return map;
 			}
 			
-			List<UserCompanyDefault> list = userCompanyService.selectByUserId(userId);
+			List<UserCompanyDefault> list = userCompanyService.selectByUserId(userId,"0");
 			String companyId = "";
 			
 			for (UserCompanyDefault userCompanyDefault : list) {
@@ -163,10 +163,10 @@ public class CutCompanyController {
 				}
 			}
 			
-			int num = userCompanyService.updateUserCompanyCoption(userId, companyId, new UserCompanyDefault().status_2);
+			int num = userCompanyService.updateUserCompanyCoption(userId, companyId, new UserCompanyDefault().status_2,"0");
 			
 			if(num>0){
-				int flag = userCompanyService.updateUserCompanyCoption(userId, cutCompanyId, new UserCompanyDefault().status_1);
+				int flag = userCompanyService.updateUserCompanyCoption(userId, cutCompanyId, new UserCompanyDefault().status_1,"0");
 				
 				if(flag>0){
 					map.put("returnCode", "3000");
@@ -304,6 +304,7 @@ public class CutCompanyController {
 			ucd.setCurrentOption(ucd.status_2);
 			ucd.setIsActive(ucd.status_1);
 			ucd.setInfoStatus(ucd.status_1);
+			ucd.setType("0");
 			
 			userCompanyService.insertSelective(ucd);
 			
@@ -419,7 +420,7 @@ public class CutCompanyController {
 			
 			String userId = user.getUserid();
 			
-			List<UserCompanyDefault> list = userCompanyService.selectByUserId(userId);
+			List<UserCompanyDefault> list = userCompanyService.selectByUserId(userId,"1");
 			
 			for (UserCompanyDefault userCompanyDefault : list) {
 				if(userCompanyDefault.getCurrentOption()!="1"&&!"1".equals(userCompanyDefault.getCurrentOption())){
@@ -487,7 +488,7 @@ public class CutCompanyController {
 			
 			String userId = user.getUserid();
 			
-			List<UserCompanyDefault> list = userCompanyService.selectByUserId(userId);
+			List<UserCompanyDefault> list = userCompanyService.selectByUserId(userId,"1");
 			String companyId = "";
 			
 			for (UserCompanyDefault userCompanyDefault : list) {
@@ -496,10 +497,10 @@ public class CutCompanyController {
 				}
 			}
 			
-			int num = userCompanyService.updateUserCompanyCoption(userId, companyId, new UserCompanyDefault().status_2);
+			int num = userCompanyService.updateUserCompanyCoption(userId, companyId, new UserCompanyDefault().status_2,"1");
 			
 			if(num>0){
-				int flag = userCompanyService.updateUserCompanyCoption(userId, cutCompanyId, new UserCompanyDefault().status_1);
+				int flag = userCompanyService.updateUserCompanyCoption(userId, cutCompanyId, new UserCompanyDefault().status_1,"1");
 				
 				if(flag>0){
 					map.put("returnCode", "3000");
@@ -636,6 +637,7 @@ public class CutCompanyController {
 				ucd.setCurrentOption(ucd.status_2);
 				ucd.setIsActive(ucd.status_1);
 				ucd.setInfoStatus(ucd.status_1);
+				ucd.setType("1");
 				
 				userCompanyService.insertSelective(ucd);
 				
@@ -794,7 +796,7 @@ public class CutCompanyController {
                 Company company = companyService.selectByCompanyName(companyNo);
                 //根据 userId 与 companyID查询 usercompany表  看是否存在记录 
                 //存在记录则已加入公司直接返回  不存在则继续操作
-                UserCompanyDefault ucd = userCompanyService.selectByUserIdAndCompanyId(userId,company.getCompany_id());
+                UserCompanyDefault ucd = userCompanyService.selectByUserIdAndCompanyId(userId,company.getCompany_id(),"1");
                 
                 if(ucd==null){
                 

@@ -70,7 +70,7 @@ public class RegisterController {
     
     @Transactional
     @RequestMapping(value = "/registerUsers", method = RequestMethod.GET, produces = "application/json;charset=utf-8")
-    public Map<String, Object> registerUsers(String phone,String password,String temporaryPwd,String userName,String companyName,String company_no,String type) {
+    public Map<String, Object> registerUsers(String phone,String password,String temporaryPwd,String userName,String companyName,String company_no,String type,HttpServletRequest request) {
 
         Map<String, Object> map = new HashMap<String, Object>();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -211,12 +211,14 @@ public class RegisterController {
 			}
 			UserCompanyDefault userCompanyKey = new UserCompanyDefault();
 			try {
+				String WebAppType = request.getHeader("type");
+				
 				// 将新创建的公司编号信息存入用户与公司关联表中
-
 				userCompanyKey.setCompanyId(companyId);
 				userCompanyKey.setUserId(userId);
 				userCompanyKey.setCurrentOption(userCompanyKey.status_1);
 				userCompanyKey.setIsActive(userCompanyKey.status_1);
+				userCompanyKey.setType(WebAppType);
 				userCompanyService.insertSelective(userCompanyKey);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -327,8 +329,11 @@ public class RegisterController {
                     //根据company_no查询出companyID
                     Company companyT = companyService.selectByCompanyName(company_no);
                     //根据EmployeeID 与 companyID查询 usercompany表  看是否存在记录 
+                    
+                    String WebAppType = request.getHeader("type");
+                    
                     //存在记录则已加入公司直接返回  不存在则继续操作
-                    UserCompanyDefault ucd = userCompanyService.selectByUserIdAndCompanyId(employeeId, companyT.getCompany_id());
+                    UserCompanyDefault ucd = userCompanyService.selectByUserIdAndCompanyId(employeeId, companyT.getCompany_id(),WebAppType);
                 	
 					// 根据输入公司编号获的公司的实体
                     Company company = companyService.selectByCompanyName(company_no);

@@ -23,6 +23,7 @@ import com.xiangshangban.transit_service.bean.Uroles;
 import com.xiangshangban.transit_service.bean.UserCompanyDefault;
 import com.xiangshangban.transit_service.bean.Uusers;
 import com.xiangshangban.transit_service.bean.UusersRolesKey;
+import com.xiangshangban.transit_service.dao.UserCompanyDefaultMapper;
 import com.xiangshangban.transit_service.service.CompanyService;
 import com.xiangshangban.transit_service.service.OSSFileService;
 import com.xiangshangban.transit_service.service.UserCompanyService;
@@ -71,7 +72,7 @@ public class AdministratorController {
 				
 		Uusers user = uusersService.selectByPhone(phone);
 		
-		String companyId = userCompanyService.selectBySoleUserId(user.getUserid()).getCompanyId();
+		String companyId = userCompanyService.selectBySoleUserId(user.getUserid(),"0").getCompanyId();
 		
 		if(StringUtils.isEmpty(companyId)){
 			map.put("returnCode","3006");
@@ -240,7 +241,7 @@ public class AdministratorController {
 		
 		JSONObject obj = JSON.parseObject(jsonString);
 		String newUserId = obj.getString("newUserId");
-		String companyId = userCompanyService.selectBySoleUserId(user.getUserid()).getCompanyId();
+		String companyId = userCompanyService.selectBySoleUserId(user.getUserid(),"0").getCompanyId();
 		
 		try {
 			UusersRolesKey uusersRolesKey = uusersRolesService.SelectAdministrator(companyId, new Uroles().admin_role);
@@ -289,13 +290,13 @@ public class AdministratorController {
 				List<UserCompanyDefault> list = new ArrayList<>();
 				
 				for (UusersRolesKey urk : urlist) {
-					 list.add(userCompanyService.selectByUserIdAndCompanyId(userId, urk.getCompanyId()));
+					 list.add(userCompanyService.selectByUserIdAndCompanyId(userId, urk.getCompanyId(),"0"));
 				}
 				
-				int num = userCompanyService.updateUserCompanyCoption(userId, companyId, new UserCompanyDefault().status_2);
+				int num = userCompanyService.updateUserCompanyCoption(userId, companyId, new UserCompanyDefault().status_2,"0");
 				
 				if(num>0){
-					userCompanyService.updateUserCompanyCoption(userId, list.get(0).getCompanyId(), new UserCompanyDefault().status_1);
+					userCompanyService.updateUserCompanyCoption(userId, list.get(0).getCompanyId(), new UserCompanyDefault().status_1,"0");
 				}
 			}
 			
