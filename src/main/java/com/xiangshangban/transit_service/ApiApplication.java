@@ -133,7 +133,7 @@ public class ApiApplication {
 		filterChainDefinitionMap.put("/loginController/offsiteLogin", "anon");
 		filterChainDefinitionMap.put("/loginController/confirmSms", "anon");
 		filterChainDefinitionMap.put("/registerController/*", "anon");
-		filterChainDefinitionMap.put("/loginController/logOuterr", "logout");
+		filterChainDefinitionMap.put("/loginController/logOuterr", "anon");
 		// filterChainDefinitionMap.put("/CompanyController/selectByCompany",
 		// "perms[admin:companyController:selectByCompany]");
 		// filterChainDefinitionMap.put("/*", "authc");//表示需要认证才可以访问

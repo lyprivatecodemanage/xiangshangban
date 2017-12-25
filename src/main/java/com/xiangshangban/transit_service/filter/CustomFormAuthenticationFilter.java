@@ -1,5 +1,9 @@
 package com.xiangshangban.transit_service.filter;
 
+import java.io.IOException;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -21,8 +25,50 @@ import com.xiangshangban.transit_service.util.RedisUtil;
 public class CustomFormAuthenticationFilter extends FormAuthenticationFilter {
 	
 	private static final Logger log = Logger.getLogger(CustomFormAuthenticationFilter.class);
-	//原FormAuthenticationFilter的认证方法
+	
 	@Override
+	public boolean onPreHandle(ServletRequest request, ServletResponse response, Object mappedValue) throws Exception {
+		HttpServletRequest req = (HttpServletRequest) request;
+		HttpServletResponse res = (HttpServletResponse)response;
+		RedisUtil redis = RedisUtil.getInstance();
+		String type = req.getHeader("type");
+		String phone = "";
+		//boolean flag = true;//账号是否在别处登录的标志
+		if(StringUtils.isNotEmpty(type) && "0".equals(type)){
+			String sessionId = req.getSession().getId();
+			phone = redis.getJedis().hget(sessionId,"session");
+			String sessionCache = redis.getJedis().hget("session"+phone, "session");
+			if(StringUtils.isNotEmpty(sessionCache) ){
+				if(sessionId.equals(sessionCache)){
+					return isAccessAllowed(request, response, mappedValue) || onAccessDenied(request, response, mappedValue);
+				}else{
+					res.setCharacterEncoding("UTF-8");
+					res.getWriter().println("账号在别处登录!");
+					return false;
+				}
+			}
+		}
+		if(StringUtils.isNotEmpty(type) && "1".equals(type)){
+			String token = req.getHeader("token");
+			String clientId = req.getHeader("clientId");
+			//登录不要传token
+			if(StringUtils.isNotEmpty(token)){
+				phone = redis.getJedis().hget(token, "token");
+				String tokenClientIdCache = redis.getJedis().hget("token"+phone, "token");
+				if(StringUtils.isNotEmpty(tokenClientIdCache)){
+					if(tokenClientIdCache.equals(clientId)){
+						return isAccessAllowed(request, response, mappedValue) || onAccessDenied(request, response, mappedValue);
+					}else{
+						res.setCharacterEncoding("UTF-8");
+						res.getWriter().println("账号在别处登录!");
+						return false;
+					}
+				}
+			}
+		}
+	        return isAccessAllowed(request, response, mappedValue) || onAccessDenied(request, response, mappedValue);
+	    }
+	
 	protected boolean onAccessDenied(ServletRequest request,
 			ServletResponse response) throws Exception {
 			boolean flag = super.onAccessDenied(request, response);
@@ -50,21 +96,8 @@ public class CustomFormAuthenticationFilter extends FormAuthenticationFilter {
 		RedisUtil redis = RedisUtil.getInstance();
 		if("1".equals(type)){
 			if(StringUtils.isEmpty(username)&&StringUtils.isEmpty(password)){
-				/*if(StringUtils.isNotEmpty(token)){
-					//从redis缓存中查phone 和 smsCode
-					phone = redis.getJedis().hget(token, "token");
-					if(StringUtils.isNotEmpty(phone)){
-						//查到phone，然后根据查到的phone去数据库查询smsCode
-						username = phone;//redis中查到的Phone
-						password = token;
-					}else{
-						username = "";
-						password = token;
-					}
-				}*/
 				username = clientId;
 				password = token;
-						
 			}
 		}
 		
