@@ -83,7 +83,7 @@ public class ServletFilter implements Filter {
 		res.setHeader("Access-Control-Max-Age", "3600");
 		// Content-Disposition文件下载时设置文件名
 		res.setHeader("Access-Control-Allow-Headers",
-				"Origin, No-Cache, X-Requested-With, If-Modified-Since, Pragma, Last-Modified, Cache-Control, Expires, Content-Type, type");
+				"Origin, No-Cache, X-Requested-With, If-Modified-Since, Pragma, Last-Modified, Cache-Control, Expires, Content-Type, type, REDIRECT,CONTENTPATH");
 		res.setHeader("XDomainRequestAllowed", "1");
 		// res.setHeader("Content-Disposition",
 		// "attachment;filename="+java.net.URLEncoder.encode("报表.xls","UTF-8"));

@@ -16,9 +16,9 @@ public class UusersServiceImpl implements UusersService {
 	private UusersMapper uusersMapper;
 	
 	@Override
-	public Uusers selectByPhone(String phone) {
+	public Uusers selectByPhone(String phone/*,String type*/) {
 		
-		return uusersMapper.selectByPhone(phone);
+		return uusersMapper.selectByPhone(phone/*,type*/);
 	}
 	@Override
 	public Uusers selectByAccount(String account) {

@@ -21,7 +21,7 @@ public interface UusersService {
 	 * @param phone
 	 * @return
 	 */
-	 Uusers selectByPhone(String phone);
+	 Uusers selectByPhone(String phone/*,String type*/);
 	 
 	 int deleteEmployee(String userId);
 	 

@@ -1,9 +1,5 @@
 package com.xiangshangban.transit_service.filter;
 
-import java.io.IOException;
-
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -24,7 +20,7 @@ import com.xiangshangban.transit_service.util.RedisUtil;
  */
 public class CustomFormAuthenticationFilter extends FormAuthenticationFilter {
 	
-	private static final Logger log = Logger.getLogger(CustomFormAuthenticationFilter.class);
+	private static final Logger logger = Logger.getLogger(CustomFormAuthenticationFilter.class);
 	
 	@Override
 	public boolean onPreHandle(ServletRequest request, ServletResponse response, Object mappedValue) throws Exception {
@@ -78,10 +74,13 @@ public class CustomFormAuthenticationFilter extends FormAuthenticationFilter {
 	 @Override
 	    protected boolean onLoginSuccess(AuthenticationToken token, Subject subject, ServletRequest request, ServletResponse response)
 	            throws Exception {
-	        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-	        HttpServletResponse httpServletResponse = (HttpServletResponse) response;
-	        String url = this.getSuccessUrl();
-	        httpServletResponse.sendRedirect(httpServletRequest.getContextPath() + url);    //页面跳转
+	       // HttpServletRequest req = (HttpServletRequest) request;
+	        HttpServletResponse res = (HttpServletResponse) response;
+	       // String url = this.getSuccessUrl();
+        	res.setCharacterEncoding("UTF-8");
+        	res.getWriter().println("3000");
+        	res.getWriter().close();
+	        //res.sendRedirect(req.getContextPath() + url);    //页面跳转
 	        return false;
 	    }
 	@Override
@@ -92,15 +91,16 @@ public class CustomFormAuthenticationFilter extends FormAuthenticationFilter {
 		String type = req.getHeader("type");
 		String token = req.getHeader("token");
 		String clientId = req.getHeader("clientId");
-		String phone = "";
-		RedisUtil redis = RedisUtil.getInstance();
+		/*String phone = "";
+		RedisUtil redis = RedisUtil.getInstance();*/
+		String loginType = req.getParameter("loginType");
 		if("1".equals(type)){
 			if(StringUtils.isEmpty(username)&&StringUtils.isEmpty(password)){
 				username = clientId;
 				password = token;
 			}
 		}
-		
+		username = username+"_"+loginType;
        return createToken(username, password, request, response);
    }
 		
