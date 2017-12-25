@@ -479,7 +479,7 @@ public class LoginController {
 		}
 		boolean smsCodeFlag = Pattern.matches("[0-9]{4}", smsCode);
 		if(!smsCodeFlag){
-			result.put("message", "验证码不正确");
+			result.put("message", "验证码格式不正确");
 			result.put("returnCode", "4002");
 			return result;
 		}
