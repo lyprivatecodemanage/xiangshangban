@@ -30,6 +30,7 @@ import com.xiangshangban.transit_service.bean.Uroles;
 import com.xiangshangban.transit_service.bean.Uusers;
 import com.xiangshangban.transit_service.service.CompanyService;
 import com.xiangshangban.transit_service.service.LoginService;
+import com.xiangshangban.transit_service.service.UserCompanyService;
 import com.xiangshangban.transit_service.service.UusersRolesService;
 import com.xiangshangban.transit_service.service.UusersService;
 import com.xiangshangban.transit_service.util.FormatUtil;
