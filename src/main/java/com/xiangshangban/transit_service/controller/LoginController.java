@@ -30,12 +30,14 @@ import com.xiangshangban.transit_service.bean.Uroles;
 import com.xiangshangban.transit_service.bean.Uusers;
 import com.xiangshangban.transit_service.service.CompanyService;
 import com.xiangshangban.transit_service.service.LoginService;
+import com.xiangshangban.transit_service.service.UserCompanyService;
 import com.xiangshangban.transit_service.service.UusersRolesService;
 import com.xiangshangban.transit_service.service.UusersService;
 import com.xiangshangban.transit_service.util.FormatUtil;
 import com.xiangshangban.transit_service.util.PropertiesUtils;
 import com.xiangshangban.transit_service.util.RedisUtil;
 import com.xiangshangban.transit_service.util.YtxSmsUtil;
+import com.xiangshangban.transit_service.util.RedisUtil.Hash;
 @RestController
 @RequestMapping("/loginController")
 public class LoginController {
@@ -48,13 +50,15 @@ public class LoginController {
 	CompanyService companyService;
 	@Autowired
 	private UusersRolesService uusersRolesService;
+	@Autowired
+	UserCompanyService userCompanyService;
 	/**
 	 * @author 李业/获取二维码
 	 * @param session
 	 * @return
 	 */
 	@RequestMapping("/getQrcode")
-	public Map<String, Object> getQrcode(String type, String companyId, HttpSession session) {
+	public Map<String, Object> getQrcode(String type,HttpSession session,HttpServletRequest request) {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
 			String qrcode = "";
@@ -79,8 +83,22 @@ public class LoginController {
 			if (Integer.valueOf(type) == 1) {
 
 				String format = "http://www.xiangshangban.com/show?shjncode=invite_";
+				
+				String token = request.getHeader("token");
+				
+				// 初始化redis
+				RedisUtil redis = RedisUtil.getInstance();
+				// 从redis取出短信验证码
+				String phone = redis.new Hash().hget(token, "token");
+				
+				Uusers user = uusersService.selectByPhone(phone);
+				
+				String WebAppType = request.getHeader("type");
+				
+				String companyid = userCompanyService.selectBySoleUserId(user.getUserid(),WebAppType).getCompanyId();
+				
 				// 根据公司ID查询出公司编号 生成二维码
-				Company company = companyService.selectByPrimaryKey(companyId);
+				Company company = companyService.selectByPrimaryKey(companyid);
 				Map<String, String> invite = new HashMap<>();
 				invite.put("companyNo", company.getCompany_no());
 				invite.put("companyName", company.getCompany_name());
