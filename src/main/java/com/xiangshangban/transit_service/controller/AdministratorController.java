@@ -70,7 +70,7 @@ public class AdministratorController {
 		// 从redis取出短信验证码
 		String phone = redis.new Hash().hget(request.getSession().getId(), "session");
 				
-		Uusers user = uusersService.selectByPhone(phone);
+		Uusers user = uusersService.selectByPhone(phone,"0");
 		
 		String companyId = userCompanyService.selectBySoleUserId(user.getUserid(),"0").getCompanyId();
 		
@@ -172,7 +172,7 @@ public class AdministratorController {
 			// 从redis取出短信验证码
 			String phone = redis.new Hash().hget(request.getSession().getId(), "session");
 					
-			Uusers user = uusersService.selectByPhone(phone);
+			Uusers user = uusersService.selectByPhone(phone,"0");
 			
 			String userId = user.getUserid();
 			
@@ -237,7 +237,7 @@ public class AdministratorController {
 		// 从redis取出短信验证码
 		String phone = redis.new Hash().hget(request.getSession().getId(), "session");
 						
-		Uusers user = uusersService.selectByPhone(phone);
+		Uusers user = uusersService.selectByPhone(phone,"0");
 		
 		JSONObject obj = JSON.parseObject(jsonString);
 		String newUserId = obj.getString("newUserId");

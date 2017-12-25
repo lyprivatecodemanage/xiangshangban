@@ -6,6 +6,8 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
@@ -35,12 +37,13 @@ public class IsSavePasswordController {
 	 * @return
 	 */
 	@RequestMapping(value="/isSavePasswd")
-	public Map<String,Object> isSavePasswd(){
+	public Map<String,Object> isSavePasswd(HttpServletRequest request){
 		Map<String,Object> result =new HashMap<String,Object>();
+		String type = request.getHeader("type");
 		try{
 			Subject subject = SecurityUtils.getSubject();
 			String phone = subject.getPrincipal().toString();
-			Uusers user = uusersService.selectByPhone(phone);
+			Uusers user = uusersService.selectByPhone(phone,type);
 			if(StringUtils.isEmpty(user.getUserpwd())){
 				result.put("message", "目前没有设置密码,请设置密码");
 				result.put("returnCode", "4026");

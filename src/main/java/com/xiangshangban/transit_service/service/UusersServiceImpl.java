@@ -16,10 +16,9 @@ public class UusersServiceImpl implements UusersService {
 	private UusersMapper uusersMapper;
 	
 	@Override
-	public Uusers selectByPhone(String phone/*,String type*/) {
-		
-		return uusersMapper.selectByPhone(phone/*,type*/);
-	}
+	public Uusers selectByPhone(String phone,String type) {
+		return uusersMapper.selectByPhone(phone,type);
+		}
 	@Override
 	public Uusers selectByAccount(String account) {
 		// TODO Auto-generated method stub
@@ -136,5 +135,10 @@ public class UusersServiceImpl implements UusersService {
 	public Employee SeletctEmployeeByUserId(String userId,String companyId) {
 		// TODO Auto-generated method stub
 		return uusersMapper.SeletctEmployeeByUserId(userId,companyId);
+	}
+	@Override
+	public Uusers selectUserByPhone(String phone) {
+		// TODO Auto-generated method stub
+		return uusersMapper.selectUserByPhone(phone);
 	}
 }

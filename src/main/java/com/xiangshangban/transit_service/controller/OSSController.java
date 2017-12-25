@@ -47,6 +47,7 @@ public class OSSController {
 		//根据token获得当前用户id,公司id
 		String phone = "";
 		String token = request.getHeader("token");
+		String type = request.getHeader("type");
 		Uusers user = new Uusers();
 		if (StringUtils.isEmpty(token)) {
 			String sessionId = request.getSession().getId();
@@ -58,7 +59,7 @@ public class OSSController {
 			phone = redis.getJedis().hget(token, "token");
 			//user = uusersService.selectCompanyByToken(token);
 		}
-		user = uusersService.selectByPhone(phone);
+		user = uusersService.selectByPhone(phone,type);
 		if (user == null || StringUtils.isEmpty(user.getCompanyId()) || StringUtils.isEmpty(user.getUserid())) {
 			
 			returnData.setReturnCode("3003");
