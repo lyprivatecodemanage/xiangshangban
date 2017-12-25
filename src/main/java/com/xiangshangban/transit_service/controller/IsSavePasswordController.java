@@ -6,8 +6,6 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.shiro.SecurityUtils;
@@ -148,7 +146,12 @@ public class IsSavePasswordController {
 				return result;
 			}
 			if(redisVoucher.equals(voucher)){
-				
+				Uusers user = uusersService.selectUserByPhone(phone);
+				if(user == null){
+					result.put("message", "此手机号不存在");
+					result.put("returnCode", "");
+					return result;
+				}
 			}else{
 				result.put("message", "非法凭证");
 				result.put("returnCode", "");
