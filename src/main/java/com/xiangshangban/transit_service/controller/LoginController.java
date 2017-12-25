@@ -1,7 +1,6 @@
 package com.xiangshangban.transit_service.controller;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -17,8 +16,6 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.subject.Subject;
-import org.crazycake.shiro.RedisManager;
-import org.crazycake.shiro.RedisSessionDAO;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,17 +26,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.fastjson.JSON;
 import com.xiangshangban.transit_service.bean.Company;
 import com.xiangshangban.transit_service.bean.Login;
-import com.xiangshangban.transit_service.bean.UniqueLogin;
 import com.xiangshangban.transit_service.bean.Uroles;
 import com.xiangshangban.transit_service.bean.Uusers;
-import com.xiangshangban.transit_service.exception.CustomException;
 import com.xiangshangban.transit_service.service.CompanyService;
 import com.xiangshangban.transit_service.service.LoginService;
-import com.xiangshangban.transit_service.service.UniqueLoginService;
-import com.xiangshangban.transit_service.service.UserCompanyService;
 import com.xiangshangban.transit_service.service.UusersRolesService;
 import com.xiangshangban.transit_service.service.UusersService;
-import com.xiangshangban.transit_service.util.FileMD5Util;
 import com.xiangshangban.transit_service.util.FormatUtil;
 import com.xiangshangban.transit_service.util.PropertiesUtils;
 import com.xiangshangban.transit_service.util.RedisUtil;
@@ -321,6 +313,7 @@ public class LoginController {
 				redis.getJedis().hset(token, "token", phone);
 				redis.getJedis().expire(token, 1800);
 			}
+			redis.getJedis().hset("token"+phone, "token", clientId);
 			this.changeLogin(phone, token, clientId, type);
 			result.put("token", token);
 		}
@@ -329,8 +322,10 @@ public class LoginController {
 			System.out.println("success\t:"+sessionId);
 			redis.getJedis().hset(sessionId, "session", phone);
 			redis.getJedis().expire(sessionId, 1800);
+			redis.getJedis().hset("session"+phone, "session", sessionId);
 			this.changeLogin(phone, sessionId, clientId, type);
 		}
+		
 		Uusers user = uusersService.selectByPhone(phone);
 		Uroles roles = uusersRolesService.SelectRoleByUserId(user.getUserid(), user.getCompanyId());
 		if(roles==null || StringUtils.isEmpty(roles.getRolename())){
@@ -419,6 +414,8 @@ public class LoginController {
 	public Map<String, Object> logOut(HttpServletRequest request) {
 		Map<String, Object> result = new HashMap<String, Object>();
 		try {
+			Subject subject = SecurityUtils.getSubject();
+			subject.logout();
 			/*String phone = "";
 			String type = request.getHeader("type");*/
 			/*if("0".equals(type)){

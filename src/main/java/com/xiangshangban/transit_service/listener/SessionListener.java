@@ -17,15 +17,15 @@ public class SessionListener implements HttpSessionListener {
 
 	@Override
 	public void sessionCreated(HttpSessionEvent se) {
-		System.out.println("==================>session创建"+se.getSession().getId());
-		 UniqueLoginService uniqueLoginService = WebApplicationContextUtils.getWebApplicationContext(se.getSession().getServletContext()).getBean(UniqueLoginService.class);
+		//System.out.println("==================>session创建"+se.getSession().getId());
+		/* UniqueLoginService uniqueLoginService = WebApplicationContextUtils.getWebApplicationContext(se.getSession().getServletContext()).getBean(UniqueLoginService.class);
 		 UniqueLogin uniqueLogin = uniqueLoginService.selectBySessionId(se.getSession().getId());
-		 System.out.println(uniqueLogin);
+		 System.out.println(uniqueLogin);*/
 	}
 
 	@Override
 	public void sessionDestroyed(HttpSessionEvent se) {
-		System.out.println("==================>session清除"+se.getSession().getId());
+		//System.out.println("==================>session清除"+se.getSession().getId());
 		 LoginService loginService = WebApplicationContextUtils.getWebApplicationContext(se.getSession().getServletContext()).getBean(LoginService.class);
 		 int i = loginService.deleteById(loginService.selectBySessionId(se.getSession().getId()).getId());
 		 if(i>0){
