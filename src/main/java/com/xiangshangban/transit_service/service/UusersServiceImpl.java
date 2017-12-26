@@ -123,22 +123,27 @@ public class UusersServiceImpl implements UusersService {
 	}
 	@Override
 	public String SelectEmployeeIdByPhone(String phone) {
-		// TODO Auto-generated method stub
+
 		return uusersMapper.SelectEmployeeIdByPhone(phone);
 	}
 	@Override
 	public int deleteEmployee(String userId) {
-		// TODO Auto-generated method stub
+
 		return uusersMapper.deleteEmployee(userId);
 	}
 	@Override
 	public Employee SeletctEmployeeByUserId(String userId,String companyId) {
-		// TODO Auto-generated method stub
+
 		return uusersMapper.SeletctEmployeeByUserId(userId,companyId);
 	}
 	@Override
 	public Uusers selectUserByPhone(String phone) {
-		// TODO Auto-generated method stub
+
 		return uusersMapper.selectUserByPhone(phone);
+	}
+	@Override
+	public int updatePaawordByPhone(Uusers user) {
+		
+		return uusersMapper.updatePaawordByPhone(user);
 	}
 }

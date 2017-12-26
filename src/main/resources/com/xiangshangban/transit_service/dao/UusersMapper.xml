@@ -373,4 +373,8 @@
 		where employee_id = #{userId}
 		and company_id = #{companyId}
 	</select>
+	<!-- 修改密码 -->
+	<update id="updatePaawordByPhone" parameterType="com.xiangshangban.transit_service.bean.Uusers">
+		update u_users set userpwd = #{userpwd} where phone = #{phone}
+	</update>
 </mapper>

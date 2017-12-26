@@ -71,4 +71,10 @@ public interface UusersService {
 	String SelectEmployeeIdByPhone(String phone);
 	
 	Employee SeletctEmployeeByUserId(String userId,String companyId);
+	/**
+	 * 根据手机号修改密码
+	 * @param user
+	 * @return
+	 */
+	int updatePaawordByPhone(Uusers user);
 }

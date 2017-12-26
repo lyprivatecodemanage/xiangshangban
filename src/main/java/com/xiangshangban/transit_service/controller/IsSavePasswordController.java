@@ -151,7 +151,16 @@ public class IsSavePasswordController {
 					result.put("message", "此手机号不存在");
 					result.put("returnCode", "");
 					return result;
+				}else {
+					user.setUserpwd(newPassword);
+					int i = uusersService.updatePaawordByPhone(user);
+					if(i>0){
+						result.put("message", "成功");
+					}else{
+						result.put("message", "未知错误,请联系管理员");
+					}
 				}
+				
 			}else{
 				result.put("message", "非法凭证");
 				result.put("returnCode", "");
