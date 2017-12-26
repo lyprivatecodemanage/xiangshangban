@@ -98,6 +98,7 @@ public class RegisterController {
 					// 创建新增实体
                     Uusers uUsers = new Uusers();
                     uUsers.setUserid(userId);
+                    uUsers.setAccount(phone);
                     uUsers.setUserpwd(password);
                     uUsers.setPhone(phone);
                     uUsers.setTemporarypwd(temporaryPwd);
