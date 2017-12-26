@@ -304,14 +304,18 @@ public class CutCompanyController {
 			ucd.setCurrentOption(ucd.status_2);
 			ucd.setIsActive(ucd.status_1);
 			ucd.setInfoStatus(ucd.status_1);
+			//创建web端 关联关系
 			ucd.setType("0");
-			
+			userCompanyService.insertSelective(ucd);
+			//创建App端 关联关系
+			ucd.setType("1");
 			userCompanyService.insertSelective(ucd);
 			
 		}catch(NullPointerException e){
 			e.printStackTrace();
 			logger.info(e);
 			companyService.deleteByPrimaryKey(company.getCompany_id());
+			userCompanyService.deleteByPrimaryKey(ucd);
 			map.put("returnCode", "4007");
 			map.put("message", "结果为空");
             return map;
@@ -637,14 +641,17 @@ public class CutCompanyController {
 				ucd.setCurrentOption(ucd.status_2);
 				ucd.setIsActive(ucd.status_1);
 				ucd.setInfoStatus(ucd.status_1);
+				//创建app端关联关系
 				ucd.setType("1");
-				
 				userCompanyService.insertSelective(ucd);
-				
+				//创建web端关联关系
+				ucd.setType("0");
+				userCompanyService.insertSelective(ucd);
 			}catch(NullPointerException e){
 				e.printStackTrace();
 				logger.info(e);
 				companyService.deleteByPrimaryKey(company.getCompany_id());
+				userCompanyService.deleteByPrimaryKey(ucd);
 				map.put("returnCode", "4007");
 				map.put("message", "结果为空");
 	            return map;

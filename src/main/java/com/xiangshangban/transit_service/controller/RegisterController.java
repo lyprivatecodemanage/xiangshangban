@@ -212,18 +212,22 @@ public class RegisterController {
 			}
 			UserCompanyDefault userCompanyKey = new UserCompanyDefault();
 			try {
-				String WebAppType = request.getHeader("type");
 				
 				// 将新创建的公司编号信息存入用户与公司关联表中
 				userCompanyKey.setCompanyId(companyId);
 				userCompanyKey.setUserId(userId);
 				userCompanyKey.setCurrentOption(userCompanyKey.status_1);
 				userCompanyKey.setIsActive(userCompanyKey.status_1);
-				userCompanyKey.setType(WebAppType);
+				//增加web端关联数据
+				userCompanyKey.setType("0");
+				int num = userCompanyService.insertSelective(userCompanyKey);
+				//增加app端关联数据
+				userCompanyKey.setType("1");
 				userCompanyService.insertSelective(userCompanyKey);
 			} catch (Exception e) {
 				e.printStackTrace();
 				logger.info(e);
+				userCompanyService.deleteByPrimaryKey(userCompanyKey);
 				uusersService.deleteByPrimaryKey(userId);
 				companyService.deleteByPrimaryKey(companyId);
 				map.put("returnCode", "3001");
